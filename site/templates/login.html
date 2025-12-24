@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Login</title>
+</head>
+<body>
+
+<h1>Login</h1>
+
+<form id="loginForm">
+  <input id="l_username" placeholder="Username" required>
+  <input id="l_password" type="password" placeholder="Password" required>
+  <button type="submit">Login</button>
+  <p id="loginStatus" style="color:red;"></p>
+</form>
+
+<p id="status"></p>
+
+<script src="{{ url_for('static', filename='login.js') }}"></script>
+</body>
+</html>

