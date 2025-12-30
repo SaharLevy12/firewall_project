@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, make_response, redirect, url_for
+from flask import Flask, render_template, request, make_response, redirect, url_for, session
 import secrets
 
 app = Flask(__name__)
+app.secret_key = "super-secret-key"
 
 # ===== Login Page =====
 @app.route("/")
@@ -13,9 +14,10 @@ def login_page():
 def login_success():
     csrf_token = secrets.token_hex(16)
 
+    session["csrf_token"] = csrf_token
+
     resp = make_response(redirect(url_for("profile_page")))
     resp.set_cookie("session", "victim_session_123", samesite="Lax")
-    resp.set_cookie("csrf_token", csrf_token, samesite="Lax")
 
     return resp
 
@@ -24,25 +26,36 @@ def login_success():
 @app.route("/profile")
 def profile_page():
     session_cookie = request.cookies.get("session")
-    csrf_token = request.cookies.get("csrf_token")
 
     if not session_cookie:
         return redirect(url_for("login_page"))
 
+    csrf_token = session.get("csrf_token")
+
     return render_template("profile.html", csrf_token=csrf_token)
+
+@app.route("/logout")
+def logout():
+    session.clear()
+
+    resp = make_response(redirect(url_for("login_page")))
+    resp.delete_cookie("session")
+
+    return resp
 
 
 # ===== Protected Action =====
 @app.route("/change-email", methods=["POST"])
 def change_email():
     session_cookie = request.cookies.get("session")
-    csrf_cookie = request.cookies.get("csrf_token")
+
+    csrf_session = session.get("csrf_token")
     csrf_form = request.form.get("csrf_token")
 
     if not session_cookie:
         return "Victim Not logged in", 401
 
-    if not csrf_cookie or csrf_cookie != csrf_form:
+    if not csrf_session or csrf_session != csrf_form:
         return "CSRF blocked", 403
 
     email = request.form.get("email")
