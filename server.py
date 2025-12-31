@@ -18,6 +18,7 @@ class Server:
         self.data_base = Database()
         self.private_key = self.create_private_key()
         self.public_key = self.create_public_key(self.private_key)
+        self.firewall_settings = self.get_settings()
 
     def open_socket(self):
         listening_socket = socket.socket()
@@ -65,18 +66,21 @@ class Server:
             print("Received:", message)
             if "login" in message:
                 loaded_message = json.loads(message)
-                is_valid,status = WAF_Utilities.check_sql_injection(loaded_message)
+                if self.firewall_settings["sql injection"]:
+                    is_valid,status = WAF_Utilities.check_sql_injection(loaded_message)
+                else:
+                    status = "Clear"
                 response = {
-                    "action":f"{loaded_message["action"]}",
-                    "username":f"{loaded_message["username"]}",
-                    "status":f"{status}"
+                    "action": loaded_message["action"],
+                    "username": loaded_message["username"],
+                    "status": status
                 }
                 await websocket.send(json.dumps(response))
 
 
     async def listen_to_web_clients(self):
         async with websockets.serve(self.handler, "0.0.0.0", 9999):
-            print(f"WebSocket server started on ws://{"0.0.0.0"}:9999")
+            print("WebSocket server started on ws://0.0.0.0:9999")
             await asyncio.Future()  
 
     def start_listen_to_web_clients(self):
@@ -100,6 +104,11 @@ class Server:
                 label=None
             )
         )
+    
+    def get_settings(self):
+        with open('firewall_settings.json', 'r') as file:
+            settings = json.load(file)
+            return settings
 
 
 if __name__ == "__main__":

@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, make_response, redirect, url_for, session
 import secrets
+import json
 
 app = Flask(__name__)
 app.secret_key = "super-secret-key"
+
+with open('firewall_settings.json', 'r') as file:
+    settings = json.load(file)
 
 # ===== Login Page =====
 @app.route("/")
@@ -12,8 +16,9 @@ def login_page():
 
 @app.route("/login-success")
 def login_success():
-    csrf_token = secrets.token_hex(16)
 
+    
+    csrf_token = secrets.token_hex(16)
     session["csrf_token"] = csrf_token
 
     resp = make_response(redirect(url_for("profile_page")))
@@ -49,6 +54,13 @@ def logout():
 def change_email():
     session_cookie = request.cookies.get("session")
 
+    if not settings["csrf"]:
+        if not session_cookie:
+            return "Victim Not logged in", 401
+        
+        email = request.form.get("email")
+        return f"Email changed to: {email}"
+
     csrf_session = session.get("csrf_token")
     csrf_form = request.form.get("csrf_token")
 
@@ -60,6 +72,7 @@ def change_email():
 
     email = request.form.get("email")
     return f"Email changed to: {email}"
+
 
 
 if __name__ == "__main__":
