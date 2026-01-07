@@ -3,7 +3,7 @@ function $(id) {
 }
 
 // חיבור ל-WebSocket
-const ws = new WebSocket("ws://localhost:9999");
+const ws = new WebSocket("ws://192.168.3.249:9999");
 
 ws.onopen = function () {
     console.log("WebSocket connected");

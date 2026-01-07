@@ -1,9 +1,6 @@
 import socket, select
 import threading
-import websockets
-import asyncio
-from waf_utilities import WAF_Utilities
-from database import Database
+from Gui.database import Database
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -18,7 +15,6 @@ class Server:
         self.data_base = Database()
         self.private_key = self.create_private_key()
         self.public_key = self.create_public_key(self.private_key)
-        self.firewall_settings = self.get_settings()
 
     def open_socket(self):
         listening_socket = socket.socket()
@@ -59,32 +55,6 @@ class Server:
                             sock.send(f"login denied,{username}".encode())
                     elif "register" in data:
                         self.data_base.register_user(data)
-
-    async def handler(self,websocket):
-        print("Client connected!")
-        async for message in websocket:
-            print("Received:", message)
-            if "login" in message:
-                loaded_message = json.loads(message)
-                if self.firewall_settings["sql injection"]:
-                    is_valid,status = WAF_Utilities.check_sql_injection(loaded_message)
-                else:
-                    status = "Clear"
-                response = {
-                    "action": loaded_message["action"],
-                    "username": loaded_message["username"],
-                    "status": status
-                }
-                await websocket.send(json.dumps(response))
-
-
-    async def listen_to_web_clients(self):
-        async with websockets.serve(self.handler, "0.0.0.0", 9999):
-            print("WebSocket server started on ws://0.0.0.0:9999")
-            await asyncio.Future()  
-
-    def start_listen_to_web_clients(self):
-        asyncio.run(self.listen_to_web_clients())
         
     def create_private_key(self):
         return rsa.generate_private_key(
@@ -104,18 +74,10 @@ class Server:
                 label=None
             )
         )
-    
-    def get_settings(self):
-        with open('firewall_settings.json', 'r') as file:
-            settings = json.load(file)
-            return settings
-
 
 if __name__ == "__main__":
     server = Server()
     sock = server.open_socket()
     
     tcp_thread = threading.Thread(target=server.listen_to_clients, args=(sock,))
-    web_thread = threading.Thread(target=server.start_listen_to_web_clients)
     tcp_thread.start()
-    web_thread.start()

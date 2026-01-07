@@ -1,10 +1,10 @@
 import wx
-from client import Client
-from utilities import Utilities
-from home import homePanel
-from register import regPanel
-from login import loginPanel
-from user import UserPanel  
+from Gui.client import Client
+from Gui.utilities import Utilities
+from Gui.pages.home import homePanel
+from Gui.pages.register import regPanel
+from Gui.pages.login import loginPanel
+from Gui.pages.user import UserPanel  
 
 
 class MyApp(wx.App):

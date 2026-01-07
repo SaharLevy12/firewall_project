@@ -1,5 +1,5 @@
 {
-    "csrf" : true,
+    "csrf" : false,
     "sql injection" : true
 }
 
