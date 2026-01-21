@@ -3,3 +3,4 @@ Flask
 regex
 wxPython
 websockets
+psutil
