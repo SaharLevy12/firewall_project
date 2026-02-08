@@ -10,15 +10,14 @@ from policies.port_service_policy import PortServicePolicy
 logger = Logger()
 config_manager = ConfigurationManager()
 
-disallowlist = config_manager.load_allowlist("not_evil_fire_wall\\disallowlist.json")
-# print(disallowlist)
+disallowlist = config_manager.load_disallowlist("not_evil_fire_wall\\disallowlist.json")
 
 scanner = Scanner()
 scanner.start()
 enforcer = Enforcer(logger)
 
 port_policy = PortServicePolicy(
-    name="Port Service Allowlist",
+    name="Port Service DisAllowlist",
     scanner=scanner,
     enforcer=enforcer,
     logger=logger,
