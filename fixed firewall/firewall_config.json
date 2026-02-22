@@ -1,4 +1,5 @@
 {
-    "blocked_ports": [21, 25, 587, 80],
-    "blocked_protocols": ["FTP", "SMTP", "HTTP"]
+  "blocked_ports": [21, 25, 587],
+  "blocked_protocols": ["FTP", "SMTP"],
+  "blocked_domains": ["facebook.com", "kanerlaw.com"]
 }

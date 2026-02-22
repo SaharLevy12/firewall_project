@@ -11,4 +11,4 @@ class CapturedPacket:
     destination_port: int | None
     transport_protocol: str
     application_protocol: str
-    payload_size: int
+    # payload_size: int

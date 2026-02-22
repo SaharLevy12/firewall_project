@@ -5,3 +5,4 @@ wxPython
 websockets
 psutil
 pydivert
+dnslib

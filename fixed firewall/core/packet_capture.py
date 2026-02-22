@@ -8,25 +8,25 @@ class PacketCapture:
         self.packet_callback_function = packet_callback_function
 
     def start_capture(self):
-        with pydivert.WinDivert("ip") as divert:
-            for packet in divert:
+        with pydivert.WinDivert("tcp or udp") as divert:
+            for raw_packet in divert:
 
                 packet_event = CapturedPacket(
                     timestamp=datetime.now(),
-                    direction="OUT" if packet.is_outbound else "IN",
-                    source_ip=packet.src_addr,
-                    source_port=packet.src_port,
-                    destination_ip=packet.dst_addr,
-                    destination_port=packet.dst_port,
+                    direction="OUT" if raw_packet.is_outbound else "IN",
+                    source_ip=raw_packet.src_addr,
+                    source_port=raw_packet.src_port,
+                    destination_ip=raw_packet.dst_addr,
+                    destination_port=raw_packet.dst_port,
                     transport_protocol="",
                     application_protocol="",
-                    payload_size=len(packet.payload) if packet.payload else 0
+                    # payload_size=len(raw_packet.payload) if raw_packet.payload else 0
                 )
 
-                allowed = self.packet_callback_function(packet, packet_event)
+                allowed = self.packet_callback_function(raw_packet, packet_event)
 
                 if allowed:
                     try:
-                        divert.send(packet)
+                        divert.send(raw_packet)
                     except OSError:
                         continue
