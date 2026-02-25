@@ -1,14 +1,24 @@
+import threading
+import wx
 from core.packet_capture import PacketCapture
 from core.firewall_engine import FirewallEngine
+from core.policy_client import PolicyClient
+from core.gui import FirewallGUI
 
 def main():
-    print("Firewall started – capturing and detecting network packets in real time")
-    firewall_engine = FirewallEngine()
-    packet_capture = PacketCapture(firewall_engine.process_packet)
-    try:
-        packet_capture.start_capture()
-    except KeyboardInterrupt:
-        print("\nFirewall packet capture stopped by user")
+    firewall = FirewallEngine()
+    pc = PolicyClient(firewall.enforcer, username="admin", is_admin=True)
 
-if __name__ == "__main__":
+    app = wx.App(False)
+    frame = FirewallGUI(pc)
+    frame.Show()
+
+    threading.Thread(target=pc.connect, daemon=True).start()
+
+    capture = PacketCapture(firewall.process_packet)
+    threading.Thread(target=capture.start_capture, daemon=True).start()
+
+    app.MainLoop()
+
+if __name__=="__main__":
     main()

@@ -5,7 +5,7 @@ class Enforcer:
         self.blocked_port_set = set()
         self.blocked_protocol_set = set()
         self.blocked_domain_set = set()
-        self.blocked_domain_ip_cache = {}
+        self.blocked_domain_ip_cache = {} 
 
     def resolve_blocked_domains(self):
         self.blocked_domain_ip_cache = {}
