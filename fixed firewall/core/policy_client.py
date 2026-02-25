@@ -3,17 +3,20 @@ import socket, threading, json, os
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import wx
+from pages.firewall_gui import FirewallGUI
+from core.main_gui import MainGUI
+
 
 class PolicyClient:
-    def __init__(self, enforcer, username="admin", is_admin=True, host="192.168.1.228", port=8080):
+    def __init__(self, enforcer, host="192.168.68.55", port=8080):
         self.enforcer = enforcer
-        self.username = username
-        self.is_admin = is_admin
+        self.username = None
+        self.is_admin = None
         self.host = host
         self.port = port
         self.sock = socket.socket()
         self.session_key = None
-        self.gui = None
 
     def connect(self):
         self.sock.connect((self.host, self.port))
@@ -28,44 +31,41 @@ class PolicyClient:
                          label=None)
         )
         self.sock.send(encrypted_key)
+                
+        threading.Thread(target=self.listen_updates, daemon=True).start()
 
-        self._receive_rules_once()
-        threading.Thread(target=self._listen_updates, daemon=True).start()
-
-    def _encrypt(self, msg: str) -> bytes:
+    def encrypt(self, msg):
         aes = AESGCM(self.session_key)
         nonce = os.urandom(12)
         return nonce + aes.encrypt(nonce, msg.encode(), None)
 
-    def _decrypt(self, data: bytes) -> str:
+    def decrypt(self, data):
         aes = AESGCM(self.session_key)
         nonce, ciphertext = data[:12], data[12:]
         return aes.decrypt(nonce, ciphertext, None).decode()
 
-    def _receive_rules_once(self):
-        data = self.sock.recv(4096)
-        msg = self._decrypt(data)
-        if msg.startswith("RULES"):
-            rules = json.loads(msg[len("RULES "):])
-            self.enforcer.update_rules(rules)
-
-    def _listen_updates(self):
+    def listen_updates(self):
         while True:
             try:
                 data = self.sock.recv(4096)
-                msg = self._decrypt(data)
-                if msg.startswith("RULES"):
-                    rules = json.loads(msg[len("RULES "):])
+                msg = self.decrypt(data)
+                if msg.startswith("rules"):
+                    rules = json.loads(msg[len("rules "):])
+                    print("rules: ", rules)
                     self.enforcer.update_rules(rules)
-                    if self.gui:
-                        import wx
-                        wx.CallAfter(self.gui.refresh_lists)
+                    wx.CallAfter(self.gui.panels["firewall"].refresh_lists(self))
+                    
+                if msg.startswith("login success"):
+                    _,username,is_admin = msg.split("|")
+                    self.username = username
+                    self.is_admin = is_admin
+                    wx.CallAfter(self.gui.show_firewall)
             except:
                 continue
 
-    def update_rules(self, new_rules: dict):
+    def command_update_rules(self, new_rules):
         if not self.is_admin:
             print("Only admin can update rules")
             return
-        msg = f"UPDATE_RULES|{self.username}|{json.dumps(new_rules)}"
-        self.sock.send(self._encrypt(msg))
+        msg = f"update rules|{self.username}|{json.dumps(new_rules)}"
+        self.sock.send(self.encrypt(msg))

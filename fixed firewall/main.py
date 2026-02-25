@@ -3,17 +3,17 @@ import wx
 from core.packet_capture import PacketCapture
 from core.firewall_engine import FirewallEngine
 from core.policy_client import PolicyClient
-from core.gui import FirewallGUI
+from core.main_gui import MainGUI
 
 def main():
     firewall = FirewallEngine()
-    pc = PolicyClient(firewall.enforcer, username="admin", is_admin=True)
+    user = PolicyClient(firewall.enforcer)
+    user.connect()
 
-    app = wx.App(False)
-    frame = FirewallGUI(pc)
+    app = wx.App()
+    frame = MainGUI(user)
+    user.gui = frame
     frame.Show()
-
-    threading.Thread(target=pc.connect, daemon=True).start()
 
     capture = PacketCapture(firewall.process_packet)
     threading.Thread(target=capture.start_capture, daemon=True).start()
