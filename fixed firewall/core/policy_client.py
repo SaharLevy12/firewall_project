@@ -9,7 +9,7 @@ from core.main_gui import MainGUI
 
 
 class PolicyClient:
-    def __init__(self, enforcer, host="192.168.68.55", port=8080):
+    def __init__(self, enforcer, host="127.0.0.1", port=8080):
         self.enforcer = enforcer
         self.username = None
         self.is_admin = None
@@ -57,15 +57,19 @@ class PolicyClient:
                     
                 if msg.startswith("login success"):
                     _,username,is_admin = msg.split("|")
+                    if is_admin == "0":
+                        is_admin = False
+                    else:
+                        is_admin = True
                     self.username = username
                     self.is_admin = is_admin
                     wx.CallAfter(self.gui.show_firewall)
+                
+                if msg.startswith("register success"):
+                    wx.MessageBox("Register completed successfully!", "Register", wx.OK | wx.ICON_INFORMATION)
             except:
                 continue
 
     def command_update_rules(self, new_rules):
-        if not self.is_admin:
-            print("Only admin can update rules")
-            return
-        msg = f"update rules|{self.username}|{json.dumps(new_rules)}"
-        self.sock.send(self.encrypt(msg))
+            msg = f"update rules|{self.username}|{json.dumps(new_rules)}"
+            self.sock.send(self.encrypt(msg))

@@ -54,6 +54,14 @@ class FirewallGUI(wx.Panel):
         add_dom.Bind(wx.EVT_BUTTON, self.add_domain)
         rem_dom.Bind(wx.EVT_BUTTON, self.remove_domain)
         refresh_btn.Bind(wx.EVT_BUTTON, self.refresh_lists)
+    
+    def check_admin(self):
+        if not self.policy_client.is_admin:
+            wx.MessageBox("Only Admin can change rules here!",
+                    "Control Panel",
+                    wx.OK | wx.ICON_WARNING)
+            return False
+        return True
         
     def refresh_lists(self, event=None):
         self.port_list.Set([str(p) for p in sorted(self.enforcer.blocked_ports)])
@@ -61,7 +69,7 @@ class FirewallGUI(wx.Panel):
         self.domain_list.Set(sorted(self.enforcer.blocked_domains))
 
     def add_port(self, event):
-        if not self.policy_client.is_admin:
+        if not self.check_admin():
             return
         dlg = wx.TextEntryDialog(self, "Enter port number:")
         if dlg.ShowModal() == wx.ID_OK:
@@ -76,7 +84,7 @@ class FirewallGUI(wx.Panel):
         dlg.Destroy()
 
     def remove_port(self, event):
-        if not self.policy_client.is_admin:
+        if not self.check_admin():
             return
         selection = self.port_list.GetSelection()
         if selection == wx.NOT_FOUND:
@@ -88,7 +96,7 @@ class FirewallGUI(wx.Panel):
             self.policy_client.command_update_rules({"blocked_ports": current})
 
     def add_protocol(self, event):
-        if not self.policy_client.is_admin:
+        if not self.check_admin():
             return
         dlg = wx.TextEntryDialog(self, "Enter protocol:")
         if dlg.ShowModal() == wx.ID_OK:
@@ -100,7 +108,7 @@ class FirewallGUI(wx.Panel):
         dlg.Destroy()
 
     def remove_protocol(self, event):
-        if not self.policy_client.is_admin:
+        if not self.check_admin():
             return
         selection = self.protocol_list.GetSelection()
         if selection == wx.NOT_FOUND:
@@ -112,7 +120,7 @@ class FirewallGUI(wx.Panel):
             self.policy_client.command_update_rules({"blocked_protocols": current})
 
     def add_domain(self, event):
-        if not self.policy_client.is_admin:
+        if not self.check_admin():
             return
         dlg = wx.TextEntryDialog(self, "Enter domain:")
         if dlg.ShowModal() == wx.ID_OK:
@@ -124,7 +132,7 @@ class FirewallGUI(wx.Panel):
         dlg.Destroy()
 
     def remove_domain(self, event):
-        if not self.policy_client.is_admin:
+        if not self.check_admin():
             return
         selection = self.domain_list.GetSelection()
         if selection == wx.NOT_FOUND:

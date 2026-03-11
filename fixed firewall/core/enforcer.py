@@ -11,6 +11,7 @@ class Enforcer:
         self.blocked_domain_ip_cache = {}
         for domain in self.blocked_domains:
             try:
+                domain = "www."+domain
                 ips = socket.gethostbyname_ex(domain)[2]
                 self.blocked_domain_ip_cache[domain] = set(ips)
             except:

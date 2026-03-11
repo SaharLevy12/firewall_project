@@ -19,7 +19,7 @@ PORT = 8080
 
 class Server:
     def __init__(self):
-        self.clients = {} # {socket: session_key, auth, is_admin}
+        self.clients = {}
         self.private_key = self.create_rsa_private_key()
         self.public_key = self.create_rsa_public_key(self.private_key)
         self.open_sockets = []
@@ -51,7 +51,7 @@ class Server:
     def broadcast_rules(self):
         for sock, client in self.clients.items():
             self.send_rules(sock, client["session_key"])
-        print("broadcast")
+        print("broadcasted")
     
     def open_socket(self):
         listening_socket = socket.socket()
@@ -101,14 +101,18 @@ class Server:
                             is_valid, username = self.database.check_login(message)
                             if is_valid == "valid":
                                 client["username"] = username
-                                # client["admin"] = pass
-                                sock.send(self.encrypt_aes(session_key,f"login success|{username}|{True}"))
+                                if client["username"] == "sahar":
+                                    client["admin"] = 1
+                                else:
+                                    client["admin"] = 0
+                                sock.send(self.encrypt_aes(session_key,f"login success|{username}|{client["admin"]}"))
                                 self.send_rules(sock, session_key)
 
                             else:
                                 pass
                         if "register" in message:
                             self.database.register_user(message)
+                            sock.send(self.encrypt_aes(session_key,"register success"))
 
                         if message.startswith("get rules"):
                             self.send_rules(sock, session_key)

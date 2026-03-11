@@ -1,5 +1,7 @@
 import wx
 from utilities import Utilities
+import tkinter as tk
+from tkinter import messagebox
 
 class regPanel(wx.Panel):
     def __init__(self, parent, size):
@@ -60,6 +62,7 @@ class regPanel(wx.Panel):
             request = f"register,{self.username.GetValue()},{self.email.GetValue()},{self.password.GetValue()}"
             request = parent.policy_client.encrypt(request)
             parent.policy_client.sock.send(request)
+
 
 
     def on_click_home(self,event):
