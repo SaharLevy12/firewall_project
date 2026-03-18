@@ -1,4 +1,5 @@
 import wx
+import socket
 
 class FirewallGUI(wx.Panel):
     def __init__(self, parent, policy_client,size):
@@ -6,6 +7,7 @@ class FirewallGUI(wx.Panel):
 
         self.policy_client = policy_client
         self.enforcer = policy_client.enforcer
+        self.application_protocols = {"FTP", "SMTP", "SMTP", "HTTP", "HTTPS"}
 
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -54,19 +56,24 @@ class FirewallGUI(wx.Panel):
         add_dom.Bind(wx.EVT_BUTTON, self.add_domain)
         rem_dom.Bind(wx.EVT_BUTTON, self.remove_domain)
         refresh_btn.Bind(wx.EVT_BUTTON, self.refresh_lists)
-    
+        
+    def is_valid_domain(self, domain):
+        try:
+            socket.gethostbyname(domain)
+            return True
+        except socket.error:
+            return False
+            
     def check_admin(self):
         if not self.policy_client.is_admin:
-            wx.MessageBox("Only Admin can change rules here!",
-                    "Control Panel",
-                    wx.OK | wx.ICON_WARNING)
+            wx.MessageBox("Only Admin can change rules here!","Control Panel",wx.OK | wx.ICON_WARNING)
             return False
         return True
         
     def refresh_lists(self, event=None):
-        self.port_list.Set([str(p) for p in sorted(self.enforcer.blocked_ports)])
-        self.protocol_list.Set(sorted(self.enforcer.blocked_protocols))
-        self.domain_list.Set(sorted(self.enforcer.blocked_domains))
+        self.port_list.Set([str(p) for p in self.enforcer.blocked_ports])
+        self.protocol_list.Set(list(self.enforcer.blocked_protocols))
+        self.domain_list.Set(list(self.enforcer.blocked_domains))
 
     def add_port(self, event):
         if not self.check_admin():
@@ -75,6 +82,9 @@ class FirewallGUI(wx.Panel):
         if dlg.ShowModal() == wx.ID_OK:
             try:
                 port = int(dlg.GetValue())
+                if port < 1 or port > 65535:
+                    wx.MessageBox("ERROR: THE PORT REACHED THE LIMIT","PORT ERORR",wx.OK | wx.ICON_WARNING)
+                    return 
                 current = list(self.enforcer.blocked_ports)
                 if port not in current:
                     current.append(port)
@@ -101,6 +111,9 @@ class FirewallGUI(wx.Panel):
         dlg = wx.TextEntryDialog(self, "Enter protocol:")
         if dlg.ShowModal() == wx.ID_OK:
             protocol = dlg.GetValue().strip().upper()
+            if not protocol in self.application_protocols:
+                wx.MessageBox("PROTOCOL UNAVAILABLE","PROTOCOL ERROR",wx.OK | wx.ICON_WARNING)
+                return
             current = list(self.enforcer.blocked_protocols)
             if protocol and protocol not in current:
                 current.append(protocol)
@@ -125,6 +138,10 @@ class FirewallGUI(wx.Panel):
         dlg = wx.TextEntryDialog(self, "Enter domain:")
         if dlg.ShowModal() == wx.ID_OK:
             domain = dlg.GetValue().strip().lower()
+            domain_to_check = "www."+domain
+            if not self.is_valid_domain(domain_to_check):
+                wx.MessageBox("ERORR: THE DOMAIN DOESNT EXIST!","Domain Error",wx.OK | wx.ICON_WARNING)
+                return
             current = list(self.enforcer.blocked_domains)
             if domain and domain not in current:
                 current.append(domain)
