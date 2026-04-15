@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import wx
 from pages.firewall_gui import FirewallGUI
 from core.main_gui import MainGUI
+from datetime import datetime
 
 
 class PolicyClient:
@@ -32,6 +33,7 @@ class PolicyClient:
         )
         self.sock.send(encrypted_key)
                 
+        threading.Thread(target=self.check_curfew, daemon=True).start()        
         threading.Thread(target=self.listen_updates, daemon=True).start()
 
     def encrypt(self, msg):
@@ -43,6 +45,12 @@ class PolicyClient:
         aes = AESGCM(self.session_key)
         nonce, ciphertext = data[:12], data[12:]
         return aes.decrypt(nonce, ciphertext, None).decode()
+    
+    def check_curfew(self):
+        time = datetime.now()
+        hours = time.hour
+        if hours == 17:
+            self.enforcer.enable_curfew()
 
     def listen_updates(self):
         while True:
@@ -54,7 +62,10 @@ class PolicyClient:
                     print("rules: ", rules)
                     self.enforcer.update_rules(rules)
                     wx.CallAfter(self.gui.panels["firewall"].refresh_lists(self))
-                    
+
+                if msg == "go to sleep ASAP!":
+                    self.enforcer.enable_curfew()
+
                 if msg.startswith("login success"):
                     _,username,is_admin = msg.split("|")
                     if is_admin == "0":

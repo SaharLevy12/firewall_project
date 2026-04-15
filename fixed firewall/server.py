@@ -45,12 +45,21 @@ class Server:
     def send_rules(self,sock, session_key):
         msg = "rules " + json.dumps(INITIAL_RULES)
         sock.send(self.encrypt_aes(session_key, msg))
-        print("sent rules to client..") 
+        print("sent rules to client..")
+
+    def send_curfew(self,sock,session_key):
+        msg = "go to sleep ASAP!"
+        sock.send(self.encrypt_aes(session_key, msg))
+        print("sent curfew to client.. ") 
     
     def broadcast_rules(self):
         for sock, client in self.clients.items():
             self.send_rules(sock, client["session_key"])
         print("broadcasted")
+    
+    def broadcast_curfew(self):
+        for sock, client in self.clients.items():
+            self.send_curfew(sock, client["session_key"])
     
     def open_socket(self):
         listening_socket = socket.socket()
@@ -104,7 +113,7 @@ class Server:
                                     client["admin"] = 1
                                 else:
                                     client["admin"] = 0
-                                sock.send(self.encrypt_aes(session_key,f"login success|{username}|{client["admin"]}"))
+                                sock.send(self.encrypt_aes(session_key,f"login success|{username}|{client['admin']}"))
                                 self.send_rules(sock, session_key)
 
                             else:
@@ -115,6 +124,9 @@ class Server:
 
                         if message.startswith("get rules"):
                             self.send_rules(sock, session_key)
+
+                        if message == "enable_curfew":
+                            self.broadcast_curfew()
 
                         elif message.startswith("update rules"):
                             json_rules = message.split("|")[2]

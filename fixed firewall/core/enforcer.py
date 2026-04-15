@@ -1,4 +1,6 @@
 import socket
+import os
+from datetime import datetime
 
 class Enforcer:
     def __init__(self):
@@ -28,6 +30,10 @@ class Enforcer:
             if packet_event.destination_ip in ips:
                 return True
         return False
+    
+    def enable_curfew(self):
+        # os.system("shutdown /s /t 0")
+        print("shutdowning...")
 
     def should_block(self, raw_packet, packet_event):
         if packet_event.source_port in self.blocked_ports:

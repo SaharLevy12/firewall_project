@@ -29,6 +29,8 @@ class FirewallGUI(wx.Panel):
         add_dom = wx.Button(self, label="Add Domain")
         rem_dom = wx.Button(self, label="Remove Domain")
         refresh_btn = wx.Button(self, label="Refresh")
+        curfew_btn = wx.Button(self, label="enable curfew")
+
 
         def make_vbox(title, listbox, add_btn, rem_btn):
             box = wx.BoxSizer(wx.VERTICAL)
@@ -56,6 +58,7 @@ class FirewallGUI(wx.Panel):
         add_dom.Bind(wx.EVT_BUTTON, self.add_domain)
         rem_dom.Bind(wx.EVT_BUTTON, self.remove_domain)
         refresh_btn.Bind(wx.EVT_BUTTON, self.refresh_lists)
+        curfew_btn.Bind(wx.EVT_BUTTON, self.send_curfew)
         
     def is_valid_domain(self, domain):
         try:
@@ -69,6 +72,11 @@ class FirewallGUI(wx.Panel):
             wx.MessageBox("Only Admin can change rules here!","Control Panel",wx.OK | wx.ICON_WARNING)
             return False
         return True
+    
+    def send_curfew(self,event):
+        if not self.check_admin():
+            return
+        self.policy_client.sock.send(b"enable_curfew")
         
     def refresh_lists(self, event=None):
         self.port_list.Set([str(p) for p in self.enforcer.blocked_ports])
