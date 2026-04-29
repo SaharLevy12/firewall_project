@@ -33,9 +33,10 @@ class Enforcer:
     
     def enable_curfew(self,sock):
         try:
-            sock.shutdown(socket.SHUT_RDWR)
-            # os.system("shutdown /s /t 0")
             print("shutdowning...")
+            sock.shutdown(socket.SHUT_RDWR)
+            sock.close()
+            # os.system("shutdown /s /t 0")
         except socket.error as e:
             print(f"Error: {e}")
         

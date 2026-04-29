@@ -87,6 +87,15 @@ class Server:
                 else:
                     data = sock.recv(4096)
 
+                    if not data:
+                        print("Client disconnected")
+                        self.open_sockets.remove(sock)
+                        if sock in self.clients:
+                             del self.clients[sock]
+                        sock.shutdown(socket.SHUT_RDWR)
+                        sock.close()
+                        continue
+
                     if sock not in self.clients:
                         session_key = self.private_key.decrypt(
                             data,

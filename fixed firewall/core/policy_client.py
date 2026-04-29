@@ -65,7 +65,7 @@ class PolicyClient:
                     wx.CallAfter(self.gui.panels["firewall"].refresh_lists(self))
 
                 if msg == "go to sleep ASAP!":
-                    self.enforcer.enable_curfew()
+                    self.enforcer.enable_curfew(self.sock)
 
                 if msg.startswith("login success"):
                     _,username,is_admin = msg.split("|")
