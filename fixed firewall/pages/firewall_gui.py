@@ -76,6 +76,7 @@ class FirewallGUI(wx.Panel):
     def send_curfew(self,event):
         if not self.check_admin():
             return
+        print("curfew enabled")
         self.policy_client.sock.send(self.policy_client.encrypt("enable_curfew"))
         
     def refresh_lists(self, event=None):

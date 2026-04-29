@@ -31,9 +31,14 @@ class Enforcer:
                 return True
         return False
     
-    def enable_curfew(self):
-        # os.system("shutdown /s /t 0")
-        print("shutdowning...")
+    def enable_curfew(self,sock):
+        try:
+            sock.shutdown(socket.SHUT_RDWR)
+            # os.system("shutdown /s /t 0")
+            print("shutdowning...")
+        except socket.error as e:
+            print(f"Error: {e}")
+        
 
     def should_block(self, raw_packet, packet_event):
         if packet_event.source_port in self.blocked_ports:
