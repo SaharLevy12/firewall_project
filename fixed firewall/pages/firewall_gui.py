@@ -76,7 +76,7 @@ class FirewallGUI(wx.Panel):
     def send_curfew(self,event):
         if not self.check_admin():
             return
-        self.policy_client.sock.send(b"enable_curfew")
+        self.policy_client.sock.send(self.policy_client.encrypt("enable_curfew"))
         
     def refresh_lists(self, event=None):
         self.port_list.Set([str(p) for p in self.enforcer.blocked_ports])

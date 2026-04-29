@@ -49,7 +49,8 @@ class PolicyClient:
     def check_curfew(self):
         time = datetime.now()
         hours = time.hour
-        if hours == 17:
+        if hours == 8:
+            print("shutting down")
             self.enforcer.enable_curfew()
 
     def listen_updates(self):
