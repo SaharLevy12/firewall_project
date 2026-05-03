@@ -10,7 +10,7 @@ from datetime import datetime
 
 
 class PolicyClient:
-    def __init__(self, enforcer, host="127.0.0.1", port=8080):
+    def __init__(self, enforcer, host="192.168.3.249", port=8080):
         self.enforcer = enforcer
         self.username = None
         self.is_admin = None
@@ -50,7 +50,7 @@ class PolicyClient:
         time = datetime.now()
         hours = time.hour
         if hours == 8:
-            print("shutting down")
+            print("shutting down by auto")
             self.enforcer.enable_curfew(self.sock)
 
     def listen_updates(self):

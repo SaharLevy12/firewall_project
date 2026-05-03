@@ -10,7 +10,6 @@ class PacketCapture:
     def start_capture(self):
         with pydivert.WinDivert("tcp or udp") as divert:
             for raw_packet in divert:
-
                 packet_event = CapturedPacket(
                     timestamp=datetime.now(),
                     direction="OUT" if raw_packet.is_outbound else "IN",

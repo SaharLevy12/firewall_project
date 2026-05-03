@@ -30,6 +30,10 @@ class FirewallGUI(wx.Panel):
         rem_dom = wx.Button(self, label="Remove Domain")
         refresh_btn = wx.Button(self, label="Refresh")
         curfew_btn = wx.Button(self, label="enable curfew")
+        
+        self.direction_choice = wx.Choice(self, choices=["OUT", "IN"])
+        self.direction_choice.SetSelection(0)
+
 
 
         def make_vbox(title, listbox, add_btn, rem_btn):
@@ -47,6 +51,9 @@ class FirewallGUI(wx.Panel):
 
         main_sizer.Add(hbox, 1, wx.EXPAND | wx.ALL, 5)
         main_sizer.Add(refresh_btn, 0, wx.EXPAND | wx.ALL, 5)
+        main_sizer.Add(curfew_btn,0, wx.EXPAND | wx.ALL, 5)
+
+        main_sizer.Insert(0, self.direction_choice, 0, wx.EXPAND | wx.ALL, 5)
 
         self.SetSizer(main_sizer)
 
