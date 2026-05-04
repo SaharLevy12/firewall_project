@@ -9,8 +9,10 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from database import Database
 
 INITIAL_RULES = {
-    "blocked_ports": [],
-    "blocked_protocols": [],
+    "blocked_ports_in": [],
+    "blocked_ports_out": [],
+    "blocked_protocols_in": [],
+    "blocked_protocols_out": [],
     "blocked_domains": []
 }
 
