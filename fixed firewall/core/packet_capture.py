@@ -10,6 +10,21 @@ class PacketCapture:
     def start_capture(self):
         with pydivert.WinDivert("tcp or udp") as divert:
             for raw_packet in divert:
+                
+                if raw_packet.is_loopback:
+                    try:
+                        divert.send(raw_packet)
+                    except:
+                        pass
+                    continue
+                
+                if raw_packet.src_port == 0 or raw_packet.dst_port == 0:
+                    try:
+                        divert.send(raw_packet)
+                    except:
+                        pass
+                    continue
+                
                 packet_event = CapturedPacket(
                     timestamp=datetime.now(),
                     direction="OUT" if raw_packet.is_outbound else "IN",
@@ -26,6 +41,8 @@ class PacketCapture:
 
                 if allowed:
                     try:
+                        print("sigma packet")
                         divert.send(raw_packet)
-                    except OSError:
+                    except OSError as e:
+                        print(e)
                         continue
