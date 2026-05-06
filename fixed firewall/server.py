@@ -52,7 +52,6 @@ class Server:
     def send_curfew(self,sock,session_key):
         msg = "go to sleep ASAP!"
         sock.send(self.encrypt_aes(session_key, msg))
-        print("sent curfew to clients except admin.. ") 
     
     def broadcast_rules(self):
         for sock, client in self.clients.items():
@@ -63,6 +62,8 @@ class Server:
         for sock, client in self.clients.items():
             if not client["admin"]:
                 self.send_curfew(sock, client["session_key"])
+        print("sent curfew to clients except admin.. ") 
+
     
     def open_socket(self):
         listening_socket = socket.socket()

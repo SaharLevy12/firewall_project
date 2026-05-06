@@ -41,7 +41,6 @@ class PacketCapture:
 
                 if allowed:
                     try:
-                        print("sigma packet")
                         divert.send(raw_packet)
                     except OSError as e:
                         print(e)
