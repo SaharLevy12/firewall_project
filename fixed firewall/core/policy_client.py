@@ -40,6 +40,7 @@ class PolicyClient:
 
         threading.Thread(target=self.listen_updates, daemon=True).start()
 
+
     def encrypt(self, msg):
         aes = AESGCM(self.session_key)
         nonce = os.urandom(12)

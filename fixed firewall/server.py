@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from database import Database
+import datetime
 
 INITIAL_RULES = {
     "blocked_ports_in": [],
@@ -63,8 +64,15 @@ class Server:
             if not client["admin"]:
                 self.send_curfew(sock, client["session_key"])
         print("sent curfew to clients except admin.. ") 
+        
+    def check_curfew(self):
+        while True:
+            time = datetime.now()
+            hour = time.hour
+            if hour == 17:
+                self.broadcast_curfew()
 
-    
+                
     def open_socket(self):
         listening_socket = socket.socket()
         listening_socket.bind((HOST, PORT))
@@ -153,4 +161,7 @@ if __name__ == "__main__":
     server_socket = server.open_socket()
     
     server_thread = threading.Thread(target=server.listen_to_clients, args=(server_socket,))
+    curfew_thread = threading.Thread(target=server.check_curfew, daemon=True).start()
+        
     server_thread.start()
+    curfew_thread.start()

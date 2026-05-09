@@ -21,7 +21,7 @@ class FirewallGUI(wx.Panel):
     def build_admin_ui(self):
         main = wx.BoxSizer(wx.VERTICAL)
 
-        title = wx.StaticText(self, label="👑 Admin Firewall Control Panel")
+        title = wx.StaticText(self, label="Admin Firewall Control Panel")
         title.SetFont(wx.Font(14, wx.FONTFAMILY_DEFAULT,
                               wx.FONTSTYLE_NORMAL,
                               wx.FONTWEIGHT_BOLD))
@@ -34,17 +34,17 @@ class FirewallGUI(wx.Panel):
         self.proto_out = wx.ListBox(self)
         self.domain_list = wx.ListBox(self)
 
-        main.Add(self.create_admin_card("🌐 Ports",
+        main.Add(self.create_admin_card("Ports",
                                        self.port_in, self.port_out,
                                        self.add_port_in, self.add_port_out,
                                        self.remove_port_in, self.remove_port_out), 1, wx.EXPAND | wx.ALL, 5)
 
-        main.Add(self.create_admin_card("📡 Protocols",
+        main.Add(self.create_admin_card("Protocols",
                                        self.proto_in, self.proto_out,
                                        self.add_proto_in, self.add_proto_out,
                                        self.remove_proto_in, self.remove_proto_out), 1, wx.EXPAND | wx.ALL, 5)
 
-        domain_box = wx.StaticBox(self, label="🌍 Domains (IN + OUT)")
+        domain_box = wx.StaticBox(self, label="Domains (IN + OUT)")
         domain_sizer = wx.StaticBoxSizer(domain_box, wx.VERTICAL)
 
         domain_sizer.Add(self.domain_list, 1, wx.EXPAND | wx.ALL, 5)
@@ -60,8 +60,8 @@ class FirewallGUI(wx.Panel):
 
         main.Add(domain_sizer, 1, wx.EXPAND | wx.ALL, 5)
 
-        refresh_btn = wx.Button(self, label="🔄 Refresh")
-        curfew_btn = wx.Button(self, label="🚫 Enable Curfew")
+        refresh_btn = wx.Button(self, label="Refresh")
+        curfew_btn = wx.Button(self, label="Enable Curfew")
 
         refresh_btn.Bind(wx.EVT_BUTTON, self.refresh_lists)
         curfew_btn.Bind(wx.EVT_BUTTON, self.send_curfew)
@@ -75,7 +75,7 @@ class FirewallGUI(wx.Panel):
     def build_client_ui(self):
         main = wx.BoxSizer(wx.VERTICAL)
 
-        title = wx.StaticText(self, label="🔒 Firewall Dashboard")
+        title = wx.StaticText(self, label="Firewall Dashboard")
         title.SetFont(wx.Font(16, wx.FONTFAMILY_DEFAULT,
                               wx.FONTSTYLE_NORMAL,
                               wx.FONTWEIGHT_BOLD))
@@ -94,17 +94,17 @@ class FirewallGUI(wx.Panel):
         self.proto_out = wx.ListBox(self)
         self.domain_list = wx.ListBox(self)
 
-        main.Add(self.create_view_card("🌐 Ports", self.port_in, self.port_out), 1, wx.EXPAND | wx.ALL, 5)
-        main.Add(self.create_view_card("📡 Protocols", self.proto_in, self.proto_out), 1, wx.EXPAND | wx.ALL, 5)
+        main.Add(self.create_view_card("Ports", self.port_in, self.port_out), 1, wx.EXPAND | wx.ALL, 5)
+        main.Add(self.create_view_card("Protocols", self.proto_in, self.proto_out), 1, wx.EXPAND | wx.ALL, 5)
 
-        domain_box = wx.StaticBox(self, label="🌍 Domains (IN + OUT)")
+        domain_box = wx.StaticBox(self, label="Domains (IN + OUT)")
         domain_sizer = wx.StaticBoxSizer(domain_box, wx.VERTICAL)
 
         domain_sizer.Add(self.domain_list, 1, wx.EXPAND | wx.ALL, 5)
 
         main.Add(domain_sizer, 1, wx.EXPAND | wx.ALL, 5)
 
-        refresh_btn = wx.Button(self, label="🔄 Refresh")
+        refresh_btn = wx.Button(self, label="Refresh")
         refresh_btn.Bind(wx.EVT_BUTTON, self.refresh_lists)
 
         main.Add(refresh_btn, 0, wx.EXPAND | wx.ALL, 10)
@@ -119,7 +119,7 @@ class FirewallGUI(wx.Panel):
         sizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 
         in_box = wx.BoxSizer(wx.VERTICAL)
-        in_box.Add(wx.StaticText(self, label="⬅ IN"), 0, wx.ALL, 5)
+        in_box.Add(wx.StaticText(self, label="IN"), 0, wx.ALL, 5)
         in_box.Add(list_in, 1, wx.EXPAND | wx.ALL, 5)
 
         btn_add_in = wx.Button(self, label="Add IN")
@@ -132,7 +132,7 @@ class FirewallGUI(wx.Panel):
         in_box.Add(btn_rem_in)
 
         out_box = wx.BoxSizer(wx.VERTICAL)
-        out_box.Add(wx.StaticText(self, label="➡ OUT"), 0, wx.ALL, 5)
+        out_box.Add(wx.StaticText(self, label="OUT"), 0, wx.ALL, 5)
         out_box.Add(list_out, 1, wx.EXPAND | wx.ALL, 5)
 
         btn_add_out = wx.Button(self, label="Add OUT")
@@ -154,11 +154,11 @@ class FirewallGUI(wx.Panel):
         sizer = wx.StaticBoxSizer(box, wx.HORIZONTAL)
 
         in_box = wx.BoxSizer(wx.VERTICAL)
-        in_box.Add(wx.StaticText(self, label="⬅ Incoming"), 0, wx.ALL, 5)
+        in_box.Add(wx.StaticText(self, label="Incoming"), 0, wx.ALL, 5)
         in_box.Add(list_in, 1, wx.EXPAND | wx.ALL, 5)
 
         out_box = wx.BoxSizer(wx.VERTICAL)
-        out_box.Add(wx.StaticText(self, label="➡ Outgoing"), 0, wx.ALL, 5)
+        out_box.Add(wx.StaticText(self, label="Outgoing"), 0, wx.ALL, 5)
         out_box.Add(list_out, 1, wx.EXPAND | wx.ALL, 5)
 
         sizer.Add(in_box, 1, wx.EXPAND)
