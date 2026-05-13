@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from database import Database
-import datetime
+from datetime import datetime
 
 INITIAL_RULES = {
     "blocked_ports_in": [],
@@ -136,9 +136,14 @@ class Server:
                                     client["admin"] = 0
                                 sock.send(self.encrypt_aes(session_key,f"login success|{username}|{client['admin']}"))
                                 self.send_rules(sock, session_key)
-
                             else:
                                 pass
+                            
+                        if "logout" in message:
+                            print("client logged out")
+                            if sock in self.clients:
+                                del self.clients[sock]
+                        
                         if "register" in message:
                             self.database.register_user(message)
                             sock.send(self.encrypt_aes(session_key,"register success"))
@@ -161,7 +166,7 @@ if __name__ == "__main__":
     server_socket = server.open_socket()
     
     server_thread = threading.Thread(target=server.listen_to_clients, args=(server_socket,))
-    curfew_thread = threading.Thread(target=server.check_curfew, daemon=True).start()
+    curfew_thread = threading.Thread(target=server.check_curfew, daemon=True)
         
     server_thread.start()
     curfew_thread.start()

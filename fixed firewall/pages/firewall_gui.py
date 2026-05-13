@@ -68,6 +68,11 @@ class FirewallGUI(wx.Panel):
 
         main.Add(refresh_btn, 0, wx.EXPAND | wx.ALL, 5)
         main.Add(curfew_btn, 0, wx.EXPAND | wx.ALL, 5)
+        
+        logout_btn = wx.Button(self, label="Logout")
+        logout_btn.Bind(wx.EVT_BUTTON, self.logout)
+
+        main.Add(logout_btn, 0, wx.EXPAND | wx.ALL, 5)
 
         self.SetSizer(main)
 
@@ -189,6 +194,15 @@ class FirewallGUI(wx.Panel):
 
     def send_curfew(self, event):
         self.policy_client.sock.send(self.policy_client.encrypt("enable_curfew"))
+    
+    def logout(self, event):
+        self.policy_client.sock.send(self.policy_client.encrypt("logout"))
+
+        self.policy_client.username = None
+        self.policy_client.is_admin = False
+
+        frame = wx.GetTopLevelParent(self)
+        frame.show_panel("home")
 
     def add_port_in(self, e): self.add_port("blocked_ports_in")
     def add_port_out(self, e): self.add_port("blocked_ports_out")
