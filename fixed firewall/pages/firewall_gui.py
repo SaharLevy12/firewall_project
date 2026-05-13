@@ -114,6 +114,12 @@ class FirewallGUI(wx.Panel):
 
         main.Add(refresh_btn, 0, wx.EXPAND | wx.ALL, 10)
 
+        logout_btn = wx.Button(self, label="Logout")
+        logout_btn.Bind(wx.EVT_BUTTON, self.logout)
+
+        main.Add(logout_btn, 0, wx.EXPAND | wx.ALL, 5)
+
+
         self.SetSizer(main)
 
 
@@ -197,6 +203,7 @@ class FirewallGUI(wx.Panel):
     
     def logout(self, event):
         self.policy_client.sock.send(self.policy_client.encrypt("logout"))
+        self.policy_client.gui = None
 
         self.policy_client.username = None
         self.policy_client.is_admin = False

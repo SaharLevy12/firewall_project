@@ -9,10 +9,12 @@ from core.main_gui import MainGUI
 def main():
     firewall = FirewallEngine()
     user = PolicyClient(firewall.enforcer)
+
     app = wx.App()
 
     frame = MainGUI(user)
     user.gui = frame
+
     frame.Show()
 
     user.connect()

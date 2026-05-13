@@ -1,9 +1,8 @@
-import socket, threading, json, os
+import socket, threading, json, os, queue
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import wx
-from datetime import datetime
 
 
 class PolicyClient:
@@ -17,7 +16,9 @@ class PolicyClient:
 
         self.sock = socket.socket()
         self.session_key = None
+
         self.gui = None
+        self.gui_queue = queue.Queue()
 
     def connect(self):
         self.sock.connect((self.host, self.port))
@@ -40,7 +41,6 @@ class PolicyClient:
 
         threading.Thread(target=self.listen_updates, daemon=True).start()
 
-
     def encrypt(self, msg):
         aes = AESGCM(self.session_key)
         nonce = os.urandom(12)
@@ -56,32 +56,20 @@ class PolicyClient:
             try:
                 data = self.sock.recv(4096)
                 msg = self.decrypt(data)
-
-                if msg.startswith("rules"):
-                    rules = json.loads(msg[len("rules "):])
-                    self.enforcer.update_rules(rules)
-
-                    wx.CallAfter(self.gui.panels["firewall"].refresh_lists)
-
-                if msg == "go to sleep ASAP!":
-                    self.enforcer.enable_curfew(self.sock)
-
-                if msg.startswith("login success"):
-                    _, username, is_admin = msg.split("|")
-
-                    self.username = username
-                    self.is_admin = True if is_admin == "1" else False
-                    
-                    wx.CallAfter(self.gui.rebuild_firewall)
-                    wx.CallAfter(self.gui.show_firewall)
-
-                if msg.startswith("register success"):
-                    wx.CallAfter(wx.MessageBox,
-                                 "Register success",
-                                 "Info",
-                                 wx.OK)
+                self.gui_queue.put(msg)
             except:
                 continue
+
+    def disconnect(self):
+        try:
+            self.sock.shutdown(socket.SHUT_RDWR)
+        except:
+            pass
+
+        try:
+            self.sock.close()
+        except:
+            pass
 
     def command_update_rules(self, new_rules):
         msg = f"update rules|{self.username}|{json.dumps(new_rules)}"

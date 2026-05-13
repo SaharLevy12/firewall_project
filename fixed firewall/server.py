@@ -141,8 +141,8 @@ class Server:
                             
                         if "logout" in message:
                             print("client logged out")
-                            if sock in self.clients:
-                                del self.clients[sock]
+                            self.clients[sock]["username"] = None
+                            self.clients[sock]["admin"] = False
                         
                         if "register" in message:
                             self.database.register_user(message)
