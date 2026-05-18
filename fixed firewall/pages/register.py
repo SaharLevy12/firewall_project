@@ -209,6 +209,12 @@ class regPanel(wx.Panel):
             )
 
             request = parent.policy_client.encrypt(request)
+            
+            self.username.Label = ""
+            self.email.Label = ""
+            self.error_email.Label = ""
+            self.password.Label = ""
+            self.error_password.Label = ""
 
             parent.policy_client.sock.send(request)
 
