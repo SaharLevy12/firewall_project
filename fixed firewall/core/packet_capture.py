@@ -1,11 +1,12 @@
 import pydivert
 from datetime import datetime
 from models.captured_packet import CapturedPacket
-
+from utilities import Utilities
 
 class PacketCapture:
     def __init__(self, packet_callback_function):
         self.packet_callback_function = packet_callback_function
+        self.utilities = Utilities()
 
     def start_capture(self):
         with pydivert.WinDivert("tcp or udp") as divert:
@@ -37,9 +38,15 @@ class PacketCapture:
                     # payload_size=len(raw_packet.payload) if raw_packet.payload else 0
                 )
 
-                allowed = self.packet_callback_function(raw_packet, packet_event)
+                allowed_by_rules = self.packet_callback_function(raw_packet, packet_event)
+                
+                # if allowed_by_rules:
+                #     allowed = self.utilities.ask_ai_opinion(raw_packet, packet_event)
+                #     allowed = True if allowed.lower() == "true" else allowed == False
+                # else:
+                #     allowed = False
 
-                if allowed:
+                if allowed_by_rules:
                     try:
                         divert.send(raw_packet)
                     except OSError as e:

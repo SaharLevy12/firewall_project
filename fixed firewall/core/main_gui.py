@@ -4,6 +4,8 @@ from pages.login import loginPanel
 from pages.register import regPanel
 from pages.home import homePanel
 import json
+import threading
+
 
 
 class MainGUI(wx.Frame):
@@ -99,6 +101,9 @@ class MainGUI(wx.Frame):
 
                 self.rebuild_firewall()
                 self.show_firewall()
+
+                firewall = self.policy_client.firewall
+                self.policy_client.thread.start()
 
             elif msg.startswith("register success"):
                 wx.MessageBox("Register success", "Info", wx.OK)

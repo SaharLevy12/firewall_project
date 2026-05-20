@@ -19,9 +19,6 @@ def main():
 
     user.connect()
 
-    capture = PacketCapture(firewall.process_packet)
-    threading.Thread(target=capture.start_capture, daemon=True).start()
-
     app.MainLoop()
 
 

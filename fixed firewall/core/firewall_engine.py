@@ -11,8 +11,7 @@ class FirewallEngine:
     def process_packet(self, raw_packet, packet_event):
         packet_event.transport_protocol = self.protocol_detector.detect_transport_protocol(raw_packet)
         packet_event.application_protocol = self.protocol_detector.detect_application_protocol(
-            packet_event.source_port, packet_event.destination_port
-        )
+            packet_event.source_port, packet_event.destination_port)
 
         should_block = self.enforcer.should_block(raw_packet, packet_event)
 

@@ -1,9 +1,13 @@
 import re
 import wx
+import google.genai as genai
+from core.protocol_detector import ProtocolDetector
+import os
 
 class Utilities:
     def __init__(self):
-        pass
+        self.protocol_detector = ProtocolDetector()
+
 
     def check_password(password,label):
 
@@ -65,7 +69,46 @@ class Utilities:
         return True
     
 
+    # def ask_ai_opinion(self, raw_packet, packet_event):
+    #     packet_event.transport_protocol = self.protocol_detector.detect_transport_protocol(raw_packet)
+    #     packet_event.application_protocol = self.protocol_detector.detect_application_protocol(
+    #     packet_event.source_port, packet_event.destination_port)
 
+    #     API_KEY = os.getenv("MASTER_KEY")
 
+    #     client = genai.Client(api_key=API_KEY)
 
-    
+    #     request = f"""you are now an expert firewall enforcer i will give you a packet that tries to go through my firewall after passing the port and domains rules
+    #                 and now your job is to inspect by the aspect of the packet i will give and rate the danger level of the packet when 1 is the safest and 10 is the most dangerous
+    #                 if the rating is 5 or more you should give me a sign to block the packet by writing True - for packet that is valid and False - invalid packet 
+    #                 make sure True or False is the first word of the answer and after it there is comma -> , so i can split the text and get True or False
+    #                 the aspect are: 1 - direction - in/out
+    #                 2 - source ip
+    #                 3 - source port
+    #                 4 - destination ip
+    #                 5 - destination port
+    #                 6 - transport protocol
+    #                 7 - application protocol
+    #                 by all those parameters make the most accurate rating for the best firewall enforcer desicion
+
+    #                 THE PACKET PARAMETERS ARE:
+
+    #                 1 - {packet_event.direction}
+    #                 2 - {packet_event.source_ip}
+    #                 3 - {packet_event.source_port}
+    #                 4 - {packet_event.destination_ip}
+    #                 5 - {packet_event.destination_port}
+    #                 6 - {packet_event.transport_protocol}
+    #                 7 - {packet_event.application_protocol}
+
+    #         """
+
+    #     respone = client.models.generate_content(model="gemini-1.5-flash",contents=request)
+    #     response_txt = respone.text
+
+    #     desicion = response_txt.split(",")[0]
+
+    #     print("ai desicion is ->" , desicion)
+
+    #     return desicion
+
