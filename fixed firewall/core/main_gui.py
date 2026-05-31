@@ -93,6 +93,9 @@ class MainGUI(wx.Frame):
                     if panel:
                         panel.refresh_lists()
 
+            if "go to sleep ASAP!" in msg:
+                self.policy_client.enforcer.enable_curfew(self.policy_client.sock)
+
             elif msg.startswith("login success"):
                 _, username, is_admin = msg.split("|")
 

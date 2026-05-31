@@ -36,9 +36,9 @@ class PacketCapture:
                     application_protocol="",
                 )
 
-                allowed_by_rules = self.packet_callback_function(raw_packet, packet_event)
+                allowed = self.packet_callback_function(raw_packet, packet_event)
 
-                if allowed_by_rules:
+                if allowed:
                     try:
                         divert.send(raw_packet)
                     except OSError as e:

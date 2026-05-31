@@ -1,4 +1,3 @@
-import threading
 import wx
 from core.packet_capture import PacketCapture
 from core.firewall_engine import FirewallEngine
