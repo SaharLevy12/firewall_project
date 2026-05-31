@@ -3,7 +3,7 @@ import threading
 
 class Database:
     def __init__(self):
-        self.conn = sqlite3.connect(r"fixed firewall/Users.db", check_same_thread=False)
+        self.conn = sqlite3.connect(r"Users.db", check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.cursor.execute('CREATE TABLE IF NOT EXISTS users (username TEXT, email TEXT, password TEXT, isAdmin INTEGER)')
         self.conn.commit()

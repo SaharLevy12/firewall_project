@@ -1,6 +1,7 @@
 import pydivert
 from datetime import datetime
 from models.captured_packet import CapturedPacket
+from utilities import Utilities
 
 
 class PacketCapture:
@@ -34,7 +35,6 @@ class PacketCapture:
                     destination_port=raw_packet.dst_port,
                     transport_protocol="",
                     application_protocol="",
-                    # payload_size=len(raw_packet.payload) if raw_packet.payload else 0
                 )
 
                 allowed = self.packet_callback_function(raw_packet, packet_event)

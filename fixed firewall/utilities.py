@@ -57,14 +57,12 @@ class Utilities:
             return False
 
         if domain.lower() != "gmail.com":
-            label.Label = "Email must end with @gmail.com."
+            label.Label = "Email must end with @gmail.com"
             return False
         
         label.SetForegroundColour(wx.GREEN)
         label.Label = ""
         return True
-    
-
 
 
 
