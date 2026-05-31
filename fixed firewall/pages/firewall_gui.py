@@ -410,6 +410,7 @@ class FirewallGUI(wx.Panel):
         self.policy_client.gui = None
         self.policy_client.username = None
         self.policy_client.is_admin = False
+        self.policy_client.thread = None
 
         frame = wx.GetTopLevelParent(self)
         frame.show_panel("home")

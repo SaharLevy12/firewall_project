@@ -103,7 +103,7 @@ class MainGUI(wx.Frame):
                 self.show_firewall()
 
                 firewall = self.policy_client.firewall
-                self.policy_client.thread.start()
-
+                self.policy_client.start_capture_thread()
+                
             elif msg.startswith("register success"):
                 wx.MessageBox("Register success", "Info", wx.OK)

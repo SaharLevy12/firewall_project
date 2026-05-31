@@ -2,4 +2,3 @@ cryptography
 regex
 wxPython
 pydivert
-google-genai

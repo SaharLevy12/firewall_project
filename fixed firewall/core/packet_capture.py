@@ -1,13 +1,11 @@
 import pydivert
 from datetime import datetime
 from models.captured_packet import CapturedPacket
-from utilities import Utilities
 
 
 class PacketCapture:
     def __init__(self, packet_callback_function):
         self.packet_callback_function = packet_callback_function
-        self.utilities = Utilities()
 
     def start_capture(self):
         with pydivert.WinDivert("tcp or udp") as divert:

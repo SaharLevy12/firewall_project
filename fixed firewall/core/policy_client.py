@@ -15,7 +15,7 @@ class PolicyClient:
 
         self.firewall = firewall = FirewallEngine()
         self.capture = PacketCapture(firewall.process_packet)
-        self.thread = threading.Thread(target=self.capture.start_capture, daemon=True)
+        self.thread = None
 
         self.host = host
         self.port = port
@@ -56,6 +56,11 @@ class PolicyClient:
         aes = AESGCM(self.session_key)
         nonce, ciphertext = data[:12], data[12:]
         return aes.decrypt(nonce, ciphertext, None).decode()
+    
+    def start_capture_thread(self):
+        self.thread = threading.Thread(target=self.capture.start_capture,daemon=True)
+        self.thread.start()
+    
 
     def listen_updates(self):
         while True:
