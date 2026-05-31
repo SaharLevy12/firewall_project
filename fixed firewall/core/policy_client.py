@@ -3,6 +3,8 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import wx
+from core.packet_capture import PacketCapture
+from core.firewall_engine import FirewallEngine
 
 
 class PolicyClient:
@@ -10,6 +12,10 @@ class PolicyClient:
         self.enforcer = enforcer
         self.username = None
         self.is_admin = False
+
+        self.firewall = firewall = FirewallEngine()
+        self.capture = PacketCapture(firewall.process_packet)
+        self.thread = threading.Thread(target=self.capture.start_capture, daemon=True)
 
         self.host = host
         self.port = port

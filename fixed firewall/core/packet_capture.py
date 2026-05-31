@@ -7,6 +7,7 @@ from utilities import Utilities
 class PacketCapture:
     def __init__(self, packet_callback_function):
         self.packet_callback_function = packet_callback_function
+        self.utilities = Utilities()
 
     def start_capture(self):
         with pydivert.WinDivert("tcp or udp") as divert:
@@ -37,9 +38,9 @@ class PacketCapture:
                     application_protocol="",
                 )
 
-                allowed = self.packet_callback_function(raw_packet, packet_event)
+                allowed_by_rules = self.packet_callback_function(raw_packet, packet_event)
 
-                if allowed:
+                if allowed_by_rules:
                     try:
                         divert.send(raw_packet)
                     except OSError as e:

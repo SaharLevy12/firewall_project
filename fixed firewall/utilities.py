@@ -1,9 +1,12 @@
 import re
 import wx
+from core.protocol_detector import ProtocolDetector
+import os
 
 class Utilities:
     def __init__(self):
-        pass
+        self.protocol_detector = ProtocolDetector()
+
 
     def check_password(password,label):
 
@@ -63,7 +66,8 @@ class Utilities:
         label.SetForegroundColour(wx.GREEN)
         label.Label = ""
         return True
-
-
-
     
+
+
+
+
