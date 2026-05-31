@@ -20,6 +20,9 @@ INITIAL_RULES = {
 HOST = "0.0.0.0"
 PORT = 8080
 
+
+# to commit
+
 class Server:
     def __init__(self):
         self.clients = {}
