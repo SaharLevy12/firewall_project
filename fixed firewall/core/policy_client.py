@@ -8,12 +8,12 @@ from core.firewall_engine import FirewallEngine
 
 
 class PolicyClient:
-    def __init__(self, enforcer, host="127.0.0.1", port=8080):
-        self.enforcer = enforcer
+    def __init__(self, firewall, host="127.0.0.1", port=8080):
+        self.enforcer = firewall.enforcer
         self.username = None
         self.is_admin = False
 
-        self.firewall = firewall = FirewallEngine()
+        self.firewall = firewall
         self.capture = PacketCapture(firewall.process_packet)
         self.thread = None
 

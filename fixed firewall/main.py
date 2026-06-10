@@ -7,7 +7,7 @@ from core.main_gui import MainGUI
 
 def main():
     firewall = FirewallEngine()
-    user = PolicyClient(firewall.enforcer)
+    user = PolicyClient(firewall)
 
     app = wx.App()
 
