@@ -10,7 +10,7 @@ class FirewallGUI(wx.Panel):
         self.enforcer = policy_client.enforcer
         self.is_admin = policy_client.is_admin
 
-        self.application_protocols = {"FTP", "SMTP", "HTTP", "HTTPS"}
+        self.application_protocols = {"FTP", "SMTP", "HTTP", "HTTPS", "POP3"}
 
         self.SetBackgroundColour(wx.Colour(15, 23, 42))
 

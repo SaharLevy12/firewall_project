@@ -1,5 +1,5 @@
 class ProtocolDetector:
-    APPLICATION_PORTS = {21: "FTP", 25: "SMTP", 587: "SMTP", 465 : "SMTP" , 80: "HTTP", 443: "HTTPS"}
+    APPLICATION_PORTS = {21: "FTP", 25: "SMTP", 587: "SMTP", 465 : "SMTP" , 993: "POP3" , 80: "HTTP", 443: "HTTPS"}
 
     def detect_transport_protocol(self, packet):
         if packet.tcp:
